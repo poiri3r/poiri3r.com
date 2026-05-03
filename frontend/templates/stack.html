@@ -1,0 +1,58 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homepage | Stack</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">My Homepage</a>
+      <button class="nav-toggle" type="button">Menu</button>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li><a href="./index.html">Home</a></li>
+          <li><a href="./about.html">About</a></li>
+          <li><a href="./portfolio.html">Portfolio</a></li>
+          <li><a class="active" href="./stack.html">Stack</a></li>
+          <li><a href="./logs.html">Logs</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="page-header">
+      <h1>Tech Stack & Info</h1>
+      <p class="muted">현재 홈페이지를 구성하는 기술 정보입니다.</p>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <dl class="kv">
+          <dt>Frontend</dt>
+          <dd>HTML, CSS, Vanilla JavaScript</dd>
+
+          <dt>Backend</dt>
+          <dd>Go (`net/http`), HTML template rendering, REST API</dd>
+
+          <dt>Logging</dt>
+          <dd>초기 파일 로그, 이후 Elasticsearch / Wazuh API 연동 계획</dd>
+
+          <dt>Deployment</dt>
+          <dd>AWS EC2, Docker, Nginx reverse proxy, HTTPS</dd>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 My Homepage</div>
+  </footer>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,66 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homepage | Portfolio</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">My Homepage</a>
+      <button class="nav-toggle" type="button">Menu</button>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li><a href="./index.html">Home</a></li>
+          <li><a href="./about.html">About</a></li>
+          <li><a class="active" href="./portfolio.html">Portfolio</a></li>
+          <li><a href="./stack.html">Stack</a></li>
+          <li><a href="./logs.html">Logs</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="page-header">
+      <h1>Portfolio</h1>
+      <p class="muted">진행했던 프로젝트를 정리한 공간입니다.</p>
+    </section>
+
+    <section class="section grid cols-2">
+      <article class="card">
+        <h3>Personal Homepage</h3>
+        <p class="muted">Go + net/http + Nginx + Docker 기반 개인 웹사이트</p>
+        <p>자기소개, 포트폴리오, 기술스택, 로그 조회를 한 사이트에서 제공하도록 구성했습니다.</p>
+      </article>
+
+      <article class="card">
+        <h3>CTF / Pwnable Study</h3>
+        <p class="muted">취약점 분석 및 exploit 자동화 스크립트 작성</p>
+        <p>IDA 분석, primitive 도출, 단계별 exploit 작성 방식으로 문제를 해결했습니다.</p>
+      </article>
+
+      <article class="card">
+        <h3>Log Dashboard (Planned)</h3>
+        <p class="muted">파일 로그에서 Elasticsearch/Wazuh로 확장 예정</p>
+        <p>운영 로그를 페이지에서 조회하고 장애 추적 시간을 줄이는 것을 목표로 합니다.</p>
+      </article>
+
+      <article class="card">
+        <h3>AWS Deployment</h3>
+        <p class="muted">EC2 + Nginx reverse proxy + HTTPS</p>
+        <p>소규모 서비스 운영을 위한 배포 자동화와 모니터링 구성을 계속 확장 중입니다.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 My Homepage</div>
+  </footer>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>
+

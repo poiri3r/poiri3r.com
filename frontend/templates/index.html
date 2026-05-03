@@ -1,0 +1,110 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homepage | Home</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./index.html">Poiri3r</a>
+      <button class="nav-toggle" type="button">Menu</button>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li><a class="active" href="#hero">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#stack">Stack</a></li>
+          <li><a href="#logs">Logs</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="landing-main">
+    <section id="hero" class="snap-section wireframe-wrap container">
+      <div class="wireframe-board">
+        <div class="wireframe-top">
+          <div class="profile-col">
+            <a class="profile-box js-holo-card" href="#" aria-label="프로필 카드 확대">
+              <img src="../assets/고죠1.jpg" alt="profile" class="profile-card-img">
+            </a>
+          </div>
+
+          <div class="intro-box">
+            <p class="intro-hello"> </p>
+            <h1 class="intro-name">준상</h1>
+            <p class="intro-handle">@poiri3r</p>
+            <p class="intro-role">Student of Pukyong National Univ.</p>
+            <p class="intro-role">Major of Computer Engineering</p>
+            <div class="intro-links">
+              <a class="intro-link" href="https://poiri3r.tistory.com" target="_blank" aria-label="Tistory">
+                <span style="font-weight:800; font-size:1.1rem;">T</span>
+              </a>
+              <a class="intro-link" href="https://instagram.com/kjs_0517" target="_blank" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              </a>
+              <a class="intro-link" href="https://cert-is.com" target="_blank" aria-label="CERT-IS">
+                <span style="font-weight:800; font-size:1.1rem;">C</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <nav class="profile-toc">
+        <a class="toc-item" href="#about">About <span>/whoami</span></a>
+        <a class="toc-item" href="#portfolio">Portfolio <span>프로젝트&스터디</span></a>
+        <a class="toc-item" href="#stack">Homepage Stack <span>서버 구성 정보</span></a>
+        <a class="toc-item" href="#logs">Logs <span>서버 로그 모니터링</span></a>
+      </nav>
+    </section>
+
+    <section id="about" class="snap-section overview-single container">
+      <div class="about-hero">
+        <div class="about-photo-wrap">
+          <img src="../assets/고죠1.jpg" alt="profile photo" class="about-photo">
+        </div>
+        <div class="about-content">
+          <p class="about-tag"> </p>
+          <h1 class="about-name">준상</h1>
+          <p class="about-handle">@poiri3r</p>
+          <p class="about-love">love hiphop, ufc, yeseo</p>
+          <p class="about-bio">국립부경대학교 컴퓨터공학부에 재학 중이며, 정보보안에 대해 공부하고 있습니다. 크게 분야를 가리면서 공부하지는 않고, 포너블로 입문을 했지만, offensive Security보단 Defensive Security에 관심을 가지고 공부하고 있습니다. Defensive의 영역이 매우 넓다고 느꼈고, 좁고 깊은 지식보단 넓고 다양한 지식을 습득하는데에 집중하여 공부에 임하고 있습니다.</p>
+          <p class="about-bio">26년도 부경대학교 정보보안동아리 CERT-IS 회장</p>
+        
+        </div>
+      </div>
+    </section>
+
+    <section id="portfolio" class="snap-section overview-single container">
+      <a class="overview-card" href="./portfolio.html">
+        <h3>Portfolio</h3>
+        <p>프로젝트와 작업물 모음</p>
+      </a>
+    </section>
+
+    <section id="stack" class="snap-section overview-single container">
+      <a class="overview-card" href="./stack.html">
+        <h3>Homepage Stack</h3>
+        <p>homepage 코드 정보</p>
+      </a>
+    </section>
+
+    <section id="logs" class="snap-section overview-single container">
+      <a class="overview-card" href="./logs.html">
+        <h3>Logs</h3>
+        <p>Server Logs</p>
+      </a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 poiri3r</div>
+  </footer>
+
+  <script src="../js/app.js"></script>
+</body>
+</html>

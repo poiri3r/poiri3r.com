@@ -26,8 +26,9 @@ body {
   font-family: "Pretendard", "Noto Sans KR", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at 88% 8%, rgba(120, 5, 8, 0.18) 0%, transparent 30%),
-    radial-gradient(circle at 10% 30%, rgba(120, 5, 8, 0.08) 0%, transparent 24%),
+    radial-gradient(circle at 88% 8%, rgba(180, 10, 15, 0.28) 0%, transparent 35%),
+    radial-gradient(circle at 50% 50%, rgba(120, 20, 180, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 8% 90%, rgba(20, 40, 180, 0.22) 0%, transparent 35%),
     linear-gradient(180deg, #030303 0%, #010101 100%);
   line-height: 1.65;
 }
@@ -609,7 +610,11 @@ body {
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
-
+.about-love {
+  margin: 0 0 0;
+  font-size: 1.3rem;
+  margin: -30px 0 5px;
+}
 .about-handle {
   margin: 0 0 28px;
   font-size: 1.4rem;
@@ -704,4 +709,162 @@ body {
   .overview-card {
     padding: 20px 16px;
   }
+}
+
+/* ── 경력 ── */
+.career-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--brand);
+  margin: 0 0 24px;
+  letter-spacing: 0.05em;
+}
+
+.career-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.career-item {
+  display: flex;
+  gap: 20px;
+  padding-bottom: 32px;
+  position: relative;
+}
+
+.career-item::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 20px;
+  bottom: 0;
+  width: 1px;
+  background: #2a2a2a;
+}
+
+.career-item:last-child::before {
+  display: none;
+}
+
+.career-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.career-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.career-date {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.career-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e8e8e8;
+  margin: 0;
+}
+
+.career-desc {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ── 자격증 ── */
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.cert-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 18px 20px;
+  border: 1px solid #2a2a2a;
+}
+
+.cert-check {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(100, 100, 220, 0.2);
+  color: #7b8cff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.cert-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e8e8e8;
+  margin: 0 0 4px;
+}
+
+.cert-date {
+  font-size: 0.8rem;
+  color: #555;
+  margin: 0;
+}
+
+/* ── 블로그 ── */
+.blog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.blog-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.blog-card:hover {
+  border-color: rgba(215, 25, 32, 0.4);
+  background: var(--surface-2);
+}
+
+.blog-date {
+  font-size: 0.8rem;
+  color: #555;
+  flex-shrink: 0;
+  width: 90px;
+}
+
+.blog-title {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #e8e8e8;
+  font-weight: 500;
+}
+
+.blog-arrow {
+  color: var(--muted);
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }

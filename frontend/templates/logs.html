@@ -1,23 +1,22 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Homepage | Logs</title>
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="./index.html">My Homepage</a>
+      <a class="brand" href="/">Poiri3r</a>
       <button class="nav-toggle" type="button">Menu</button>
       <nav class="nav">
         <ul class="nav-list">
-          <li><a href="./index.html">Home</a></li>
-          <li><a href="./about.html">About</a></li>
-          <li><a href="./portfolio.html">Portfolio</a></li>
-          <li><a href="./stack.html">Stack</a></li>
-          <li><a class="active" href="./logs.html">Logs</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/portfolio">Portfolio</a></li>
+          <li><a href="/#stack">Stack</a></li>
+          <li><a class="active" href="/#logs">Logs</a></li>
         </ul>
       </nav>
     </div>
@@ -26,39 +25,22 @@
   <main class="container">
     <section class="page-header">
       <h1>Logs</h1>
-      <p class="muted">초기에는 파일 기반 로그를 조회하고, 추후 Elasticsearch/Wazuh 연동 예정입니다.</p>
+      <p class="muted">서버 로그 모니터링 페이지입니다.</p>
     </section>
 
     <section class="section">
       <div class="card">
-        <p><span class="badge">Sample</span> 현재는 더미 데이터로 UI만 구성되어 있습니다.</p>
         <table class="table">
           <thead>
             <tr>
               <th>Time</th>
               <th>Level</th>
-              <th>Source</th>
               <th>Message</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="logs-tbody">
             <tr>
-              <td>2026-05-02 17:40:21</td>
-              <td>INFO</td>
-              <td>app</td>
-              <td>server started on :8080</td>
-            </tr>
-            <tr>
-              <td>2026-05-02 17:42:04</td>
-              <td>WARN</td>
-              <td>nginx</td>
-              <td>upstream response delayed</td>
-            </tr>
-            <tr>
-              <td>2026-05-02 17:44:55</td>
-              <td>ERROR</td>
-              <td>app</td>
-              <td>failed to parse log query</td>
+              <td colspan="3">로딩 중...</td>
             </tr>
           </tbody>
         </table>
@@ -67,10 +49,27 @@
   </main>
 
   <footer class="footer">
-    <div class="container">© 2026 My Homepage</div>
+    <div class="container">© 2026 poiri3r</div>
   </footer>
 
-  <script src="../js/app.js"></script>
+  <script src="/static/js/app.js"></script>
+  <script>
+    fetch('/api/logs')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById('logs-tbody');
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3">로그가 없습니다.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = data.map(log => `
+          <tr>
+            <td>${log.created_at}</td>
+            <td>${log.level}</td>
+            <td>${log.message}</td>
+          </tr>
+        `).join('');
+      });
+  </script>
 </body>
 </html>
-

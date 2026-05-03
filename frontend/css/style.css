@@ -868,3 +868,34 @@ body {
   font-size: 0.9rem;
   flex-shrink: 0;
 }
+
+/* ── 블로그 탭 ── */
+.blog-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.blog-tab {
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.blog-tab:hover {
+  border-color: rgba(215, 25, 32, 0.4);
+  color: #fff;
+}
+
+.blog-tab.active {
+  background: rgba(215, 25, 32, 0.15);
+  border-color: rgba(215, 25, 32, 0.6);
+  color: #fff;
+}

@@ -4,9 +4,6 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"net/http"
-	"regexp"
-	"strconv"
-	"io"
 	"example.com/db"
 	"example.com/models"
 )
@@ -21,9 +18,10 @@ type RSSChannel struct {
 }
 
 type RSSItem struct {
-	Title   string `xml:"title"`
-	Link    string `xml:"link"`
-	PubDate string `xml:"pubDate"`
+	Title    string `xml:"title"`
+	Link     string `xml:"link"`
+	PubDate  string `xml:"pubDate"`
+	Category string `xml:"category"`
 }
 
 // 페이지 핸들러
@@ -45,7 +43,6 @@ func LogsPage(w http.ResponseWriter, r *http.Request) {
 
 // Blog RSS 핸들러
 func GetBlog(w http.ResponseWriter, r *http.Request) {
-	// RSS 파싱
 	rssResp, err := http.Get("https://poiri3r.tistory.com/rss")
 	if err != nil {
 		http.Error(w, "RSS 요청 실패", http.StatusInternalServerError)
@@ -59,32 +56,10 @@ func GetBlog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 전체 글 수 파싱 (블로그 메인 HTML에서)
-	total := 0
-	htmlResp, err := http.Get("https://poiri3r.tistory.com")
-	if err == nil {
-		defer htmlResp.Body.Close()
-		body, err := io.ReadAll(htmlResp.Body)
-		if err == nil {
-			// 티스토리 HTML에서 전체 글 수 추출
-			re := regexp.MustCompile(`total_count[^>]*>([0-9,]+)<`)
-			matches := re.FindSubmatch(body)
-			if len(matches) > 1 {
-				countStr := regexp.MustCompile(`[^0-9]`).ReplaceAllString(string(matches[1]), "")
-				total, _ = strconv.Atoi(countStr)
-			}
-		}
-	}
-
 	type BlogPost struct {
 		Title   string `json:"title"`
 		Link    string `json:"link"`
 		PubDate string `json:"pub_date"`
-	}
-
-	type BlogResponse struct {
-		Total int        `json:"total"`
-		Posts []BlogPost `json:"posts"`
 	}
 
 	var posts []BlogPost
@@ -97,10 +72,7 @@ func GetBlog(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(BlogResponse{
-		Total: total,
-		Posts: posts,
-	})
+	json.NewEncoder(w).Encode(posts)
 }
 
 // API 핸들러

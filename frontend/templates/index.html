@@ -130,8 +130,8 @@
             <span style="font-weight:800; font-size:1rem;">T</span>
           </a>
         </div>
-        <p class="muted" style="margin-bottom:12px; font-size:0.95rem;">poiri3r.tistory.com 블로그 최신 글</p>
-        <p class="muted" id="blog-count" style="margin-bottom:12px; font-size:0.9rem;"></p>
+        <p class="muted" style="margin-bottom:8px; font-size:0.95rem;">poiri3r.tistory.com 블로그 최신 글</p>
+        <p class="muted" id="blog-count" style="margin-bottom:16px; font-size:0.9rem;"></p>
         <div class="blog-list" id="blog-list" style="margin-bottom:40px;">
           <p class="muted">로딩 중...</p>
         </div>
@@ -189,10 +189,9 @@
   <script>
     fetch('/api/blog')
       .then(res => res.json())
-      .then(data => {
+      .then(posts => {
         const list = document.getElementById('blog-list');
         const count = document.getElementById('blog-count');
-        const posts = Array.isArray(data) ? data : (data.posts || []);
         if (!posts || posts.length === 0) {
           list.innerHTML = '<p class="muted">글이 없습니다.</p>';
           return;

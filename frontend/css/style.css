@@ -869,6 +869,173 @@ body {
   flex-shrink: 0;
 }
 
+/* ── 섹션 공통 ── */
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #e8e8e8;
+}
+
+.section-link {
+  display: inline-block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.section-link:hover {
+  color: #fff;
+}
+
+.section-link-prominent {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  border: 1px solid rgba(215, 25, 32, 0.45);
+  border-radius: 10px;
+  background: rgba(215, 25, 32, 0.1);
+  transition: all 0.2s ease;
+}
+
+.section-link-prominent:hover {
+  background: rgba(215, 25, 32, 0.2);
+  border-color: rgba(215, 25, 32, 0.7);
+  box-shadow: 0 0 16px rgba(215, 25, 32, 0.2);
+}
+
+.refresh-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  border-color: rgba(215, 25, 32, 0.4);
+  color: #fff;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── 방문자 통계 ── */
+.visitor-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.visitor-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.visitor-stat-card.visitor-stat-warn {
+  border-color: rgba(255, 165, 0, 0.3);
+  background: linear-gradient(180deg, rgba(255, 165, 0, 0.05), transparent), var(--surface);
+}
+
+.visitor-stat-card.visitor-stat-danger {
+  border-color: rgba(215, 25, 32, 0.35);
+  background: linear-gradient(180deg, rgba(215, 25, 32, 0.07), transparent), var(--surface);
+}
+
+.visitor-stat-value {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #e8e8e8;
+  line-height: 1;
+}
+
+.visitor-stat-warn .visitor-stat-value {
+  color: #ffb347;
+}
+
+.visitor-stat-danger .visitor-stat-value {
+  color: #e84040;
+}
+
+.visitor-stat-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* ── 접근 로그 테이블 ── */
+.log-time {
+  font-size: 0.82rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.log-ip {
+  font-family: monospace;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.log-method {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.06);
+  color: #e8e8e8;
+}
+
+.log-path {
+  font-family: monospace;
+  font-size: 0.88rem;
+  color: #c8c8c8;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.log-status {
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.status-2xx { background: rgba(50,200,100,0.15); color: #4ddb85; }
+.status-3xx { background: rgba(100,150,255,0.15); color: #7ba7ff; }
+.status-4xx { background: rgba(255,165,0,0.15); color: #ffb347; }
+.status-5xx { background: rgba(215,25,32,0.15); color: #e84040; }
+
+.log-ua {
+  font-size: 0.78rem;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ── 블로그 탭 ── */
 .blog-tabs {
   display: flex;

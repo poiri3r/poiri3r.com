@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat /c/Users/LACUC/Desktop/homepage/backend/models/*.go)",
+      "Bash(go build:*)"
+    ]
+  }
+}

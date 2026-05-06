@@ -27,4 +27,12 @@ func Init() {
 		level TEXT,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	)`)
+
+	DB.Exec(`CREATE TABLE IF NOT EXISTS visitor_cache (
+		id INTEGER PRIMARY KEY CHECK (id = 1),
+		today_visitors INTEGER DEFAULT 0,
+		malicious_attempts INTEGER DEFAULT 0,
+		blocked_ips INTEGER DEFAULT 0,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)`)
 }

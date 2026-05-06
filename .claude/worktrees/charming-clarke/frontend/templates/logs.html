@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homepage | Logs</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">Poiri3r</a>
+      <button class="nav-toggle" type="button">Menu</button>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/portfolio">Portfolio</a></li>
+          <li><a href="/#stack">Stack</a></li>
+          <li><a class="active" href="/#logs">Logs</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="page-header">
+      <h1>Logs</h1>
+      <p class="muted">서버 로그 모니터링 페이지입니다.</p>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Level</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody id="logs-tbody">
+            <tr>
+              <td colspan="3">로딩 중...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 poiri3r</div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+  <script>
+    fetch('/api/logs')
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById('logs-tbody');
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3">로그가 없습니다.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = data.map(log => `
+          <tr>
+            <td>${log.created_at}</td>
+            <td>${log.level}</td>
+            <td>${log.message}</td>
+          </tr>
+        `).join('');
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homepage | Stack</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">Poiri3r</a>
+      <button class="nav-toggle" type="button">Menu</button>
+      <nav class="nav">
+        <ul class="nav-list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/portfolio">Portfolio</a></li>
+          <li><a class="active" href="/#stack">Stack</a></li>
+          <li><a href="/#logs">Logs</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="page-header">
+      <h1>Tech Stack & Info</h1>
+      <p class="muted">현재 홈페이지를 구성하는 기술 정보입니다.</p>
+    </section>
+
+    <section class="section">
+      <div class="card">
+        <dl class="kv">
+          <dt>Frontend</dt>
+          <dd>HTML, CSS, Vanilla JavaScript</dd>
+
+          <dt>Backend</dt>
+          <dd>Go (net/http), REST API</dd>
+
+          <dt>DB</dt>
+          <dd>SQLite</dd>
+
+          <dt>Deployment</dt>
+          <dd>AWS EC2, Nginx reverse proxy, HTTPS</dd>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2026 poiri3r</div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

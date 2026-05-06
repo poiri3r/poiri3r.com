@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Homepage | Logs</title>
   <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <header class="site-header">
@@ -16,34 +17,91 @@
           <li><a href="/">Home</a></li>
           <li><a href="/portfolio">Portfolio</a></li>
           <li><a href="/#stack">Stack</a></li>
-          <li><a class="active" href="/#logs">Logs</a></li>
+          <li><a class="active" href="/logs">Logs</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <section class="page-header">
-      <h1>Logs</h1>
-      <p class="muted">서버 로그 모니터링 페이지입니다.</p>
+    <section class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+      <div>
+        <h1>Logs</h1>
+        <p class="muted">보안 대시보드</p>
+      </div>
+      <button class="refresh-btn" id="refresh-btn" onclick="loadAll()" style="margin-bottom:22px;">새로고침</button>
     </section>
 
+    <!-- 차트 그리드 -->
     <section class="section">
-      <div class="card">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Time</th>
-              <th>Level</th>
-              <th>Message</th>
-            </tr>
-          </thead>
-          <tbody id="logs-tbody">
-            <tr>
-              <td colspan="3">로딩 중...</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="dashboard-grid">
+        <div class="card chart-card">
+          <p class="chart-title">전체 방문자 국가</p>
+          <canvas id="chart-visitor-countries"></canvas>
+        </div>
+        <div class="card chart-card">
+          <p class="chart-title">공격자 국가</p>
+          <canvas id="chart-attack-countries"></canvas>
+        </div>
+        <div class="card chart-card">
+          <p class="chart-title">정상 / 이상 트래픽 비율</p>
+          <canvas id="chart-traffic-ratio"></canvas>
+        </div>
+        <div class="card chart-card">
+          <p class="chart-title">차단 이유</p>
+          <canvas id="chart-block-reasons"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- 탭 -->
+    <section class="section">
+      <div class="log-tab-bar">
+        <button class="log-tab active" onclick="showTab('nginx', this)">Nginx 로그</button>
+        <button class="log-tab" onclick="showTab('alerts', this)">CrowdSec 알럿</button>
+        <button class="log-tab" onclick="showTab('decisions', this)">차단 목록</button>
+      </div>
+
+      <!-- Nginx 로그 탭 -->
+      <div id="tab-nginx" class="tab-content">
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="table">
+            <thead>
+              <tr><th>시각</th><th>IP</th><th>메서드</th><th>경로</th><th>상태</th><th>User-Agent</th></tr>
+            </thead>
+            <tbody id="nginx-tbody">
+              <tr><td colspan="6" class="muted" style="padding:20px;">로딩 중...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CrowdSec 알럿 탭 -->
+      <div id="tab-alerts" class="tab-content" style="display:none;">
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="table">
+            <thead>
+              <tr><th>시각</th><th>IP</th><th>국가</th><th>시나리오</th><th>이벤트 수</th></tr>
+            </thead>
+            <tbody id="alerts-tbody">
+              <tr><td colspan="5" class="muted" style="padding:20px;">로딩 중...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 차단 목록 탭 -->
+      <div id="tab-decisions" class="tab-content" style="display:none;">
+        <div class="card" style="padding:0; overflow:hidden;">
+          <table class="table">
+            <thead>
+              <tr><th>시각</th><th>IP</th><th>시나리오</th><th>유형</th><th>만료</th></tr>
+            </thead>
+            <tbody id="decisions-tbody">
+              <tr><td colspan="5" class="muted" style="padding:20px;">로딩 중...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   </main>
@@ -54,22 +112,188 @@
 
   <script src="/static/js/app.js"></script>
   <script>
-    fetch('/api/logs')
-      .then(res => res.json())
-      .then(data => {
-        const tbody = document.getElementById('logs-tbody');
-        if (!data || data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="3">로그가 없습니다.</td></tr>';
-          return;
+    // ── Chart.js 기본 설정 ──────────────────────────────
+    Chart.defaults.color = '#b6b6b6';
+    Chart.defaults.borderColor = '#2d2d2d';
+
+    const CHART_COLORS = [
+      'rgba(215,25,32,0.8)', 'rgba(100,150,255,0.8)', 'rgba(50,200,100,0.8)',
+      'rgba(255,165,0,0.8)', 'rgba(180,80,255,0.8)', 'rgba(0,200,200,0.8)',
+      'rgba(255,100,150,0.8)', 'rgba(150,255,100,0.8)', 'rgba(255,200,0,0.8)',
+      'rgba(100,200,255,0.8)'
+    ];
+
+    let charts = {};
+
+    function destroyChart(id) {
+      if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+    }
+
+    // ── 차트 렌더링 ─────────────────────────────────────
+    function renderBarChart(id, labels, data, label) {
+      destroyChart(id);
+      const ctx = document.getElementById(id).getContext('2d');
+      charts[id] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label,
+            data,
+            backgroundColor: CHART_COLORS,
+            borderRadius: 6,
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: '#1e1e1e' }, ticks: { color: '#b6b6b6' } },
+            y: { grid: { display: false }, ticks: { color: '#e8e8e8' } }
+          }
         }
-        tbody.innerHTML = data.map(log => `
-          <tr>
-            <td>${log.created_at}</td>
-            <td>${log.level}</td>
-            <td>${log.message}</td>
-          </tr>
-        `).join('');
       });
+    }
+
+    function renderDoughnutChart(id, labels, data) {
+      destroyChart(id);
+      const ctx = document.getElementById(id).getContext('2d');
+      charts[id] = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: ['rgba(50,200,100,0.8)', 'rgba(215,25,32,0.8)'],
+            borderWidth: 0,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#b6b6b6', padding: 16 } }
+          }
+        }
+      });
+    }
+
+    function renderDashboard(data) {
+      // 방문자 국가
+      if (data.visitor_countries?.length) {
+        renderBarChart('chart-visitor-countries',
+          data.visitor_countries.map(d => d.country),
+          data.visitor_countries.map(d => d.count), '방문자 수');
+      }
+      // 공격자 국가
+      if (data.attack_countries?.length) {
+        renderBarChart('chart-attack-countries',
+          data.attack_countries.map(d => d.country),
+          data.attack_countries.map(d => d.count), '공격 수');
+      }
+      // 트래픽 비율
+      if (data.traffic_ratio) {
+        renderDoughnutChart('chart-traffic-ratio',
+          ['정상', '이상'],
+          [data.traffic_ratio.normal, data.traffic_ratio.suspicious]);
+      }
+      // 차단 이유
+      if (data.block_reasons?.length) {
+        renderBarChart('chart-block-reasons',
+          data.block_reasons.map(d => d.reason.replace('crowdsecurity/', '')),
+          data.block_reasons.map(d => d.count), '차단 수');
+      }
+    }
+
+    // ── 테이블 렌더링 ────────────────────────────────────
+    function statusClass(s) {
+      const c = parseInt(s);
+      if (c >= 500) return 'status-5xx';
+      if (c >= 400) return 'status-4xx';
+      if (c >= 300) return 'status-3xx';
+      return 'status-2xx';
+    }
+
+    function renderNginx(data) {
+      const tbody = document.getElementById('nginx-tbody');
+      if (!data?.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="muted" style="padding:20px;">로그가 없습니다.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(e => `
+        <tr>
+          <td class="log-time">${e.time}</td>
+          <td class="log-ip">${e.ip}</td>
+          <td><span class="log-method">${e.method}</span></td>
+          <td class="log-path">${e.path}</td>
+          <td><span class="log-status ${statusClass(e.status)}">${e.status}</span></td>
+          <td class="log-ua muted">${e.user_agent}</td>
+        </tr>`).join('');
+    }
+
+    function renderAlerts(data) {
+      const tbody = document.getElementById('alerts-tbody');
+      if (!data?.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="muted" style="padding:20px;">알럿이 없습니다.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(e => `
+        <tr>
+          <td class="log-time">${e.created_at}</td>
+          <td class="log-ip">${e.source_ip}</td>
+          <td>${e.source_country || '—'}</td>
+          <td class="log-path">${e.scenario.replace('crowdsecurity/', '')}</td>
+          <td>${e.events_count}</td>
+        </tr>`).join('');
+    }
+
+    function renderDecisions(data) {
+      const tbody = document.getElementById('decisions-tbody');
+      if (!data?.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="muted" style="padding:20px;">차단 목록이 없습니다.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(e => `
+        <tr>
+          <td class="log-time">${e.created_at}</td>
+          <td class="log-ip">${e.value}</td>
+          <td class="log-path">${e.scenario.replace('crowdsecurity/', '')}</td>
+          <td><span class="badge">${e.type}</span></td>
+          <td class="log-time">${e.until || '—'}</td>
+        </tr>`).join('');
+    }
+
+    // ── 탭 전환 ─────────────────────────────────────────
+    function showTab(name, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.log-tab').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + name).style.display = 'block';
+      btn.classList.add('active');
+    }
+
+    // ── 데이터 로드 ──────────────────────────────────────
+    function loadAll() {
+      const btn = document.getElementById('refresh-btn');
+      btn.disabled = true;
+      btn.textContent = '불러오는 중...';
+
+      Promise.all([
+        fetch('/api/dashboard').then(r => r.json()),
+        fetch('/api/visitors/detail').then(r => r.json()),
+        fetch('/api/crowdsec/alerts').then(r => r.json()),
+        fetch('/api/crowdsec/decisions').then(r => r.json()),
+      ]).then(([dashboard, nginx, alerts, decisions]) => {
+        renderDashboard(dashboard);
+        renderNginx(nginx);
+        renderAlerts(alerts);
+        renderDecisions(decisions);
+      }).catch(() => {}).finally(() => {
+        btn.disabled = false;
+        btn.textContent = '새로고침';
+      });
+    }
+
+    loadAll();
   </script>
 </body>
 </html>

@@ -168,15 +168,29 @@
     </section>
 
     <section id="logs" class="snap-section overview-single container">
-      <div class="section-summary">
-        <h2 class="section-title">Logs</h2>
-        <p class="section-desc">서버 로그 모니터링 페이지입니다.</p>
-        <ul class="section-list">
-          <li>실시간 서버 상태 확인</li>
-          <li>접속 로그 분석</li>
-          <li>에러 모니터링</li>
-        </ul>
-        <a class="section-link" href="/logs">자세히 보기 &rarr;</a>
+      <div class="section-summary" style="width:100%; max-width:900px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <h2 class="section-title" style="margin:0;">Logs</h2>
+          <button class="refresh-btn" id="refresh-btn" onclick="refreshVisitors()">새로고침</button>
+        </div>
+        <p class="muted" style="margin-bottom:28px;">서버 방문자 및 보안 이벤트 요약</p>
+
+        <div class="visitor-stats" id="visitor-stats">
+          <div class="visitor-stat-card">
+            <span class="visitor-stat-value" id="stat-visitors">—</span>
+            <span class="visitor-stat-label">오늘 방문자</span>
+          </div>
+          <div class="visitor-stat-card visitor-stat-warn">
+            <span class="visitor-stat-value" id="stat-malicious">—</span>
+            <span class="visitor-stat-label">악성 시도</span>
+          </div>
+          <div class="visitor-stat-card visitor-stat-danger">
+            <span class="visitor-stat-value" id="stat-blocked">—</span>
+            <span class="visitor-stat-label">차단된 IP</span>
+          </div>
+        </div>
+
+        <a class="section-link-prominent" href="/logs">자세히 보기 &rarr;</a>
       </div>
     </section>
   </main>
@@ -186,6 +200,32 @@
   </footer>
 
   <script src="/static/js/app.js"></script>
+  <script>
+    function applyVisitorData(data) {
+      document.getElementById('stat-visitors').textContent = data.today_visitors ?? '—';
+      document.getElementById('stat-malicious').textContent = data.malicious_attempts ?? '—';
+      document.getElementById('stat-blocked').textContent = data.blocked_ips ?? '—';
+    }
+
+    function refreshVisitors() {
+      const btn = document.getElementById('refresh-btn');
+      btn.disabled = true;
+      btn.textContent = '불러오는 중...';
+      fetch('/api/visitors/refresh')
+        .then(res => res.json())
+        .then(data => applyVisitorData(data))
+        .catch(() => {})
+        .finally(() => {
+          btn.disabled = false;
+          btn.textContent = '새로고침';
+        });
+    }
+
+    fetch('/api/visitors/summary')
+      .then(res => res.json())
+      .then(data => applyVisitorData(data))
+      .catch(() => {});
+  </script>
   <script>
     fetch('/api/blog')
       .then(res => res.json())

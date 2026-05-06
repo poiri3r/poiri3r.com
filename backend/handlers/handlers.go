@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"example.com/collector"
 	"example.com/db"
-	"example.com/models"
 )
 
 // RSS 구조체 (tistory에서 정보 긁어오기)
@@ -59,7 +58,7 @@ func GetBlog(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "RSS 파싱 실패", http.StatusInternalServerError)
 		return
 	}
-	blogpost 구조체에는 제목 링크 날짜, 링크는 하이퍼링크용
+	//blogpost 구조체에는 제목 링크 날짜, 링크는 하이퍼링크용
 	type BlogPost struct {
 		Title   string `json:"title"`
 		Link    string `json:"link"`

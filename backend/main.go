@@ -20,7 +20,7 @@ func main() {
 
 	// 페이지 라우터
 	mux.HandleFunc("/", handlers.IndexPage)
-	mux.HandleFunc("/portfolio", handlers.PortfolioPage)
+	//mux.HandleFunc("/portfolio", handlers.PortfolioPage)
 	mux.HandleFunc("/stack", handlers.StackPage)
 	mux.HandleFunc("/logs", handlers.LogsPage)
 
@@ -31,7 +31,7 @@ func main() {
 	mux.HandleFunc("/api/dashboard", handlers.GetDashboard)
 	mux.HandleFunc("/api/crowdsec/alerts", handlers.GetCrowdsecAlerts)
 	mux.HandleFunc("/api/crowdsec/decisions", handlers.GetCrowdsecDecisions)
-	mux.HandleFunc("/api/portfolio", handlers.GetPortfolio)
+	//mux.HandleFunc("/api/portfolio", handlers.GetPortfolio)
 	mux.HandleFunc("/api/blog", handlers.GetBlog)
 
 	http.ListenAndServe(":3000", mux)

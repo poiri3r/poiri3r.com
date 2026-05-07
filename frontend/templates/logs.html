@@ -93,6 +93,11 @@
             </tbody>
           </table>
         </div>
+        <div class="pagination">
+          <button id="alerts-prev" onclick="alertsPage--; renderAlertsPage();" disabled>← 이전</button>
+          <span id="alerts-page-info" class="muted">— / —</span>
+          <button id="alerts-next" onclick="alertsPage++; renderAlertsPage();" disabled>다음 →</button>
+        </div>
       </div>
 
       <!-- 차단 목록 탭 -->
@@ -106,6 +111,11 @@
               <tr><td colspan="5" class="muted" style="padding:20px;">로딩 중...</td></tr>
             </tbody>
           </table>
+        </div>
+        <div class="pagination">
+          <button id="decisions-prev" onclick="decisionsPage--; renderDecisionsPage();" disabled>← 이전</button>
+          <span id="decisions-page-info" class="muted">— / —</span>
+          <button id="decisions-next" onclick="decisionsPage++; renderDecisionsPage();" disabled>다음 →</button>
         </div>
       </div>
     </section>
@@ -257,13 +267,14 @@
       renderNginxPage();
     }
 
-    function renderAlerts(data) {
+    let alertsData = [], alertsPage = 0;
+    let decisionsData = [], decisionsPage = 0;
+
+    function renderAlertsPage() {
       const tbody = document.getElementById('alerts-tbody');
-      if (!data?.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="muted" style="padding:20px;">알림이 없습니다.</td></tr>';
-        return;
-      }
-      tbody.innerHTML = data.map(e => `
+      const totalPages = Math.max(1, Math.ceil(alertsData.length / PAGE_SIZE));
+      const slice = alertsData.slice(alertsPage * PAGE_SIZE, (alertsPage + 1) * PAGE_SIZE);
+      tbody.innerHTML = slice.map(e => `
         <tr>
           <td class="log-time">${e.created_at}</td>
           <td class="log-ip">${e.source_ip}</td>
@@ -271,15 +282,16 @@
           <td class="log-path">${e.scenario.replace('crowdsecurity/', '')}</td>
           <td>${e.events_count}</td>
         </tr>`).join('');
+      document.getElementById('alerts-page-info').textContent = `${alertsPage + 1} / ${totalPages}`;
+      document.getElementById('alerts-prev').disabled = alertsPage === 0;
+      document.getElementById('alerts-next').disabled = alertsPage >= totalPages - 1;
     }
 
-    function renderDecisions(data) {
+    function renderDecisionsPage() {
       const tbody = document.getElementById('decisions-tbody');
-      if (!data?.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="muted" style="padding:20px;">차단 목록이 없습니다.</td></tr>';
-        return;
-      }
-      tbody.innerHTML = data.map(e => `
+      const totalPages = Math.max(1, Math.ceil(decisionsData.length / PAGE_SIZE));
+      const slice = decisionsData.slice(decisionsPage * PAGE_SIZE, (decisionsPage + 1) * PAGE_SIZE);
+      tbody.innerHTML = slice.map(e => `
         <tr>
           <td class="log-time">${e.created_at}</td>
           <td class="log-ip">${e.value}</td>
@@ -287,6 +299,31 @@
           <td><span class="badge">${e.type}</span></td>
           <td class="log-time">${e.until || '—'}</td>
         </tr>`).join('');
+      document.getElementById('decisions-page-info').textContent = `${decisionsPage + 1} / ${totalPages}`;
+      document.getElementById('decisions-prev').disabled = decisionsPage === 0;
+      document.getElementById('decisions-next').disabled = decisionsPage >= totalPages - 1;
+    }
+
+    function renderAlerts(data) {
+      alertsData = data || [];
+      alertsPage = 0;
+      if (!alertsData.length) {
+        document.getElementById('alerts-tbody').innerHTML =
+          '<tr><td colspan="5" class="muted" style="padding:20px;">알림이 없습니다.</td></tr>';
+        return;
+      }
+      renderAlertsPage();
+    }
+
+    function renderDecisions(data) {
+      decisionsData = data || [];
+      decisionsPage = 0;
+      if (!decisionsData.length) {
+        document.getElementById('decisions-tbody').innerHTML =
+          '<tr><td colspan="5" class="muted" style="padding:20px;">차단 목록이 없습니다.</td></tr>';
+        return;
+      }
+      renderDecisionsPage();
     }
 
     // ── 탭 전환 ─────────────────────────────────────────

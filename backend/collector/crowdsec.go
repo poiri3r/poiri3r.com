@@ -7,6 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// crowdsecDB가 환경변수로 등록되어 있으면 해당 값 반환, 없으면 기본 경로
 func crowdsecDBPath() string {
 	if p := os.Getenv("CROWDSEC_DB_PATH"); p != "" {
 		return p
@@ -14,11 +15,12 @@ func crowdsecDBPath() string {
 	return "/var/lib/crowdsec/data/crowdsec.db"
 }
 
+// crowdsecDB를 readonly로 열기
 func openCrowdsecDB() (*sql.DB, error) {
 	return sql.Open("sqlite3", crowdsecDBPath()+"?mode=ro")
 }
 
-// 실제 공격 탐지 수 (커뮤니티 IP 업데이트 제외)
+// 실제 공격 탐지 수 (커뮤니티 블록리스트 제외)
 func fetchAlerts() int {
 	db, err := openCrowdsecDB()
 	if err != nil {
@@ -31,7 +33,7 @@ func fetchAlerts() int {
 	return count
 }
 
-// 현재 차단된 IP 수
+// 로컬에서 직접 차단한 IP 수 (CAPI 커뮤니티 블록리스트 제외)
 func fetchBlockedIPs() int {
 	db, err := openCrowdsecDB()
 	if err != nil {
@@ -40,7 +42,7 @@ func fetchBlockedIPs() int {
 	defer db.Close()
 
 	var count int
-	db.QueryRow(`SELECT COUNT(*) FROM decisions`).Scan(&count)
+	db.QueryRow(`SELECT COUNT(*) FROM decisions WHERE origin = 'crowdsec'`).Scan(&count)
 	return count
 }
 
@@ -67,7 +69,7 @@ func fetchAlertIPs() map[string]struct{} {
 	return ips
 }
 
-// 공격자 국가 분포 (상위 10개)
+// 공격자 국가 분포 — alerts의 source_country + 로컬 decisions IP GeoIP 조회 합산 (상위 10개)
 func fetchAttackCountries() []CountryStat {
 	db, err := openCrowdsecDB()
 	if err != nil {
@@ -75,29 +77,43 @@ func fetchAttackCountries() []CountryStat {
 	}
 	defer db.Close()
 
+	counts := make(map[string]int)
+
+	// 1. alerts 테이블의 source_country (이미 국가 정보 있음)
 	rows, err := db.Query(`
 		SELECT source_country, COUNT(*) as cnt
 		FROM alerts
 		WHERE source_ip != '' AND source_country != ''
 		GROUP BY source_country
-		ORDER BY cnt DESC
-		LIMIT 10
 	`)
-	if err != nil {
-		return nil
+	if err == nil {
+		defer rows.Close()
+		for rows.Next() {
+			var country string
+			var cnt int
+			rows.Scan(&country, &cnt)
+			counts[country] += cnt
+		}
 	}
-	defer rows.Close()
 
-	var stats []CountryStat
-	for rows.Next() {
-		var s CountryStat
-		rows.Scan(&s.Country, &s.Count)
-		stats = append(stats, s)
+	// 2. 로컬 decisions IP를 GeoIP로 조회해서 합산
+	ipRows, err := db.Query(`SELECT DISTINCT value FROM decisions WHERE origin = 'crowdsec'`)
+	if err == nil {
+		defer ipRows.Close()
+		for ipRows.Next() {
+			var ip string
+			ipRows.Scan(&ip)
+			country := lookupCountry(ip)
+			if country != "" {
+				counts[country]++
+			}
+		}
 	}
-	return stats
+
+	return sortedCountryStats(counts, 10)
 }
 
-// 차단 이유 분포 (상위 10개)
+// 차단 이유 분포 — 로컬 차단만 (CAPI 제외), 상위 10개
 func fetchBlockReasons() []BlockReason {
 	db, err := openCrowdsecDB()
 	if err != nil {
@@ -108,6 +124,7 @@ func fetchBlockReasons() []BlockReason {
 	rows, err := db.Query(`
 		SELECT scenario, COUNT(*) as cnt
 		FROM decisions
+		WHERE origin = 'crowdsec'
 		GROUP BY scenario
 		ORDER BY cnt DESC
 		LIMIT 10
@@ -126,7 +143,7 @@ func fetchBlockReasons() []BlockReason {
 	return reasons
 }
 
-// CrowdSec 알럿 상세 목록
+// CrowdSec 알림 상세 목록
 func FetchAlertList(limit int) []AlertEntry {
 	db, err := openCrowdsecDB()
 	if err != nil {
@@ -155,7 +172,7 @@ func FetchAlertList(limit int) []AlertEntry {
 	return entries
 }
 
-// CrowdSec 차단 목록
+// CrowdSec 차단 목록 — 로컬 차단만 (CAPI 제외)
 func FetchDecisionList(limit int) []DecisionEntry {
 	db, err := openCrowdsecDB()
 	if err != nil {
@@ -166,6 +183,7 @@ func FetchDecisionList(limit int) []DecisionEntry {
 	rows, err := db.Query(`
 		SELECT created_at, until, scenario, value, type
 		FROM decisions
+		WHERE origin = 'crowdsec'
 		ORDER BY created_at DESC
 		LIMIT ?
 	`, limit)

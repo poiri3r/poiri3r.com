@@ -15,7 +15,6 @@
       <nav class="nav">
         <ul class="nav-list">
           <li><a href="/">Home</a></li>
-          <li><a href="/portfolio">Portfolio</a></li>
           <li><a href="/#stack">Stack</a></li>
           <li><a class="active" href="/logs">Logs</a></li>
         </ul>
@@ -259,7 +258,6 @@
     }
 
     let alertsData = [], alertsPage = 0;
-    let decisionsData = [], decisionsPage = 0;
 
     function renderAlertsPage() {
       const tbody = document.getElementById('alerts-tbody');
@@ -279,22 +277,6 @@
       document.getElementById('alerts-next').disabled = alertsPage >= totalPages - 1;
     }
 
-    function renderDecisionsPage() {
-      const tbody = document.getElementById('decisions-tbody');
-      const totalPages = Math.max(1, Math.ceil(decisionsData.length / PAGE_SIZE));
-      const slice = decisionsData.slice(decisionsPage * PAGE_SIZE, (decisionsPage + 1) * PAGE_SIZE);
-      tbody.innerHTML = slice.map(e => `
-        <tr>
-          <td class="log-time">${formatCSTime(e.created_at)}</td>
-          <td class="log-ip">${e.value}</td>
-          <td class="log-path">${e.scenario.replace('crowdsecurity/', '')}</td>
-          <td><span class="badge">${e.type}</span></td>
-          <td class="log-time">${formatCSTime(e.until)}</td>
-        </tr>`).join('');
-      document.getElementById('decisions-page-info').textContent = `${decisionsPage + 1} / ${totalPages}`;
-      document.getElementById('decisions-prev').disabled = decisionsPage === 0;
-      document.getElementById('decisions-next').disabled = decisionsPage >= totalPages - 1;
-    }
 
     function renderAlerts(data) {
       alertsData = data || [];
@@ -307,16 +289,6 @@
       renderAlertsPage();
     }
 
-    function renderDecisions(data) {
-      decisionsData = data || [];
-      decisionsPage = 0;
-      if (!decisionsData.length) {
-        document.getElementById('decisions-tbody').innerHTML =
-          '<tr><td colspan="5" class="muted" style="padding:20px;">차단 목록이 없습니다.</td></tr>';
-        return;
-      }
-      renderDecisionsPage();
-    }
 
     // ── 탭 전환 ─────────────────────────────────────────
     function showTab(name, btn) {

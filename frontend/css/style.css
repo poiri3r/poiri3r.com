@@ -1009,63 +1009,13 @@ body {
 .log-path {
   font-family: monospace;
   font-size: 0.88rem;
-  color: #c8c8c8;
-  max-width: 220px;
+  color: #e0e0e0;
+  max-width: 340px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.log-status {
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 6px;
-}
-
-.status-2xx { background: rgba(50,200,100,0.15); color: #4ddb85; }
-.status-3xx { background: rgba(100,150,255,0.15); color: #7ba7ff; }
-.status-4xx { background: rgba(255,165,0,0.15); color: #ffb347; }
-.status-5xx { background: rgba(215,25,32,0.15); color: #e84040; }
-
-.log-ua {
-  font-size: 0.78rem;
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* ── 블로그 탭 ── */
-.blog-tabs {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.blog-tab {
-  padding: 7px 16px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: var(--surface);
-  color: var(--muted);
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.blog-tab:hover {
-  border-color: rgba(215, 25, 32, 0.4);
-  color: #fff;
-}
-
-.blog-tab.active {
-  background: rgba(215, 25, 32, 0.15);
-  border-color: rgba(215, 25, 32, 0.6);
-  color: #fff;
-}
 
 /* ── 대시보드 그리드 ── */
 .dashboard-grid {

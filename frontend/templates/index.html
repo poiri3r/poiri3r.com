@@ -9,7 +9,7 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="./index.html">Poiri3r</a>
+      <a class="brand" href="/">Poiri3r</a>
       <button class="nav-toggle" type="button">Menu</button>
       <nav class="nav">
         <ul class="nav-list">
@@ -78,6 +78,7 @@
         </div>
       </div>
     </section>
+
 
     <section id="portfolio" class="snap-section overview-single container">
       <div class="section-summary" style="width:100%; max-width:900px;">
@@ -225,8 +226,7 @@
       .then(res => res.json())
       .then(data => applyVisitorData(data))
       .catch(() => {});
-  </script>
-  <script>
+
     fetch('/api/blog')
       .then(res => res.json())
       .then(posts => {

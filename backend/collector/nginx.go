@@ -176,6 +176,15 @@ func parseNginxLine(line string) (AccessEntry, bool) {
 		path = reqParts[1]
 	}
 
+	// 유효한 HTTP 메서드가 아니면 제외
+	validMethods := map[string]bool{
+		"GET": true, "POST": true, "PUT": true, "DELETE": true,
+		"HEAD": true, "OPTIONS": true, "PATCH": true, "CONNECT": true, "TRACE": true,
+	}
+	if !validMethods[method] {
+		return AccessEntry{}, false
+	}
+
 	after := strings.Fields(line[timeEnd+reqStart+1+reqEnd+1:])
 	status := ""
 	if len(after) >= 2 {

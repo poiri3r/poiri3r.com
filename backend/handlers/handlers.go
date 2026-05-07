@@ -105,7 +105,7 @@ func GetVisitorSummary(w http.ResponseWriter, r *http.Request) {
 //collect.go에 구현된 ParseRecentLogs로 최근 100개의 로그를 읽어옴
 //현재 기준으로는 logs 페이지에 로그만 뜨는데 대쉬보드 구현 이후에는 개수를 낮추고 페이지 형식으로 구현 예정
 func GetVisitorDetail(w http.ResponseWriter, r *http.Request) {
-	entries := collector.ParseRecentLogs(100)
+	entries := collector.ParseRecentLogs(500)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(entries)
 }

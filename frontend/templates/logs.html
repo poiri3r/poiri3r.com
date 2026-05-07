@@ -59,7 +59,6 @@
       <div class="log-tab-bar">
         <button class="log-tab active" onclick="showTab('nginx', this)">Nginx 로그</button>
         <button class="log-tab" onclick="showTab('alerts', this)">CrowdSec 알림</button>
-        <button class="log-tab" onclick="showTab('decisions', this)">차단 목록</button>
       </div>
 
       <!-- Nginx 로그 탭 -->
@@ -86,10 +85,10 @@
         <div class="card" style="padding:0; overflow:hidden;">
           <table class="table">
             <thead>
-              <tr><th>시각</th><th>IP</th><th>국가</th><th>시나리오</th><th>이벤트 수</th></tr>
+              <tr><th>시각</th><th>IP</th><th>조치</th><th>국가</th><th>시나리오</th><th>이벤트 수</th></tr>
             </thead>
             <tbody id="alerts-tbody">
-              <tr><td colspan="5" class="muted" style="padding:20px;">로딩 중...</td></tr>
+              <tr><td colspan="6" class="muted" style="padding:20px;">로딩 중...</td></tr>
             </tbody>
           </table>
         </div>
@@ -100,24 +99,6 @@
         </div>
       </div>
 
-      <!-- 차단 목록 탭 -->
-      <div id="tab-decisions" class="tab-content" style="display:none;">
-        <div class="card" style="padding:0; overflow:hidden;">
-          <table class="table">
-            <thead>
-              <tr><th>시각</th><th>IP</th><th>시나리오</th><th>유형</th><th>만료</th></tr>
-            </thead>
-            <tbody id="decisions-tbody">
-              <tr><td colspan="5" class="muted" style="padding:20px;">로딩 중...</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="pagination">
-          <button id="decisions-prev" onclick="decisionsPage--; renderDecisionsPage();" disabled>← 이전</button>
-          <span id="decisions-page-info" class="muted">— / —</span>
-          <button id="decisions-next" onclick="decisionsPage++; renderDecisionsPage();" disabled>다음 →</button>
-        </div>
-      </div>
     </section>
   </main>
 
@@ -288,6 +269,7 @@
         <tr>
           <td class="log-time">${formatCSTime(e.created_at)}</td>
           <td class="log-ip">${e.source_ip}</td>
+          <td><span class="badge">${e.action || '—'}</span></td>
           <td>${e.source_country || '—'}</td>
           <td class="log-path">${e.scenario.replace('crowdsecurity/', '')}</td>
           <td>${e.events_count}</td>
@@ -319,7 +301,7 @@
       alertsPage = 0;
       if (!alertsData.length) {
         document.getElementById('alerts-tbody').innerHTML =
-          '<tr><td colspan="5" class="muted" style="padding:20px;">알림이 없습니다.</td></tr>';
+          '<tr><td colspan="6" class="muted" style="padding:20px;">알림이 없습니다.</td></tr>';
         return;
       }
       renderAlertsPage();
@@ -354,12 +336,10 @@
         fetch('/api/dashboard').then(r => r.json()),
         fetch('/api/visitors/detail').then(r => r.json()),
         fetch('/api/crowdsec/alerts').then(r => r.json()),
-        fetch('/api/crowdsec/decisions').then(r => r.json()),
-      ]).then(([dashboard, nginx, alerts, decisions]) => {
+      ]).then(([dashboard, nginx, alerts]) => {
         renderDashboard(dashboard);
         renderNginx(nginx);
         renderAlerts(alerts);
-        renderDecisions(decisions);
       }).catch(() => {}).finally(() => {
         btn.disabled = false;
         btn.textContent = '새로고침';

@@ -133,7 +133,7 @@ func fetchBlockReasons() []BlockReason {
 		WHERE origin = 'crowdsec'
 		GROUP BY scenario
 		ORDER BY cnt DESC
-		LIMIT 10
+		LIMIT 5
 	`)
 	if err != nil {
 		return nil
@@ -158,10 +158,11 @@ func FetchAlertList(limit int) []AlertEntry {
 	defer db.Close()
 
 	rows, err := db.Query(`
-		SELECT created_at, scenario, source_ip, source_country, events_count
-		FROM alerts
-		WHERE source_ip != ''
-		ORDER BY created_at DESC
+		SELECT a.created_at, a.scenario, a.source_ip, a.source_country, a.events_count,
+		       COALESCE((SELECT d.type FROM decisions d WHERE d.value = a.source_ip AND d.origin = 'crowdsec' LIMIT 1), '—') as action
+		FROM alerts a
+		WHERE a.source_ip != ''
+		ORDER BY a.created_at DESC
 		LIMIT ?
 	`, limit)
 	if err != nil {
@@ -172,7 +173,7 @@ func FetchAlertList(limit int) []AlertEntry {
 	var entries []AlertEntry
 	for rows.Next() {
 		var e AlertEntry
-		rows.Scan(&e.CreatedAt, &e.Scenario, &e.SourceIP, &e.SourceCountry, &e.EventsCount)
+		rows.Scan(&e.CreatedAt, &e.Scenario, &e.SourceIP, &e.SourceCountry, &e.EventsCount, &e.Action)
 		entries = append(entries, e)
 	}
 	return entries

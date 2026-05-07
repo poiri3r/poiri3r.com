@@ -41,6 +41,7 @@ type AlertEntry struct {
 	CreatedAt     string `json:"created_at"`
 	Scenario      string `json:"scenario"`
 	SourceIP      string `json:"source_ip"`
+	Action        string `json:"action"`
 	SourceCountry string `json:"source_country"`
 	EventsCount   int    `json:"events_count"`
 }

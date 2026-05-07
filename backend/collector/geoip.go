@@ -19,7 +19,7 @@ func getGeoDB() *geoip2.Reader {
 		if path == "" {
 			// CrowdSec이 내부적으로 사용하는 GeoLite2 기본 경로
 			// Country DB 없으면 City DB로 폴백 (둘 다 국가 정보 포함)
-		path = "/var/lib/crowdsec/data/GeoLite2-City.mmdb"
+			path = "/var/lib/crowdsec/data/GeoLite2-City.mmdb"
 		}
 		db, err := geoip2.Open(path)
 		if err != nil {

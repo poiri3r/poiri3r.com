@@ -124,12 +124,6 @@ func GetCrowdsecAlerts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(entries)
 }
 
-// CrowdSec 차단 목록
-func GetCrowdsecDecisions(w http.ResponseWriter, r *http.Request) {
-	entries := collector.FetchDecisionList(200)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(entries)
-}
 //새로고침 로직 : collect.Collect 즉시 실행
 func RefreshVisitorSummary(w http.ResponseWriter, r *http.Request) {
 	s := collector.Collect()

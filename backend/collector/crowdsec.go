@@ -179,31 +179,3 @@ func FetchAlertList(limit int) []AlertEntry {
 	return entries
 }
 
-// CrowdSec 차단 목록 — 로컬 차단만 (CAPI 제외)
-func FetchDecisionList(limit int) []DecisionEntry {
-	db, err := openCrowdsecDB()
-	if err != nil {
-		return nil
-	}
-	defer db.Close()
-
-	rows, err := db.Query(`
-		SELECT created_at, until, scenario, value, type
-		FROM decisions
-		WHERE origin = 'crowdsec'
-		ORDER BY created_at DESC
-		LIMIT ?
-	`, limit)
-	if err != nil {
-		return nil
-	}
-	defer rows.Close()
-
-	var entries []DecisionEntry
-	for rows.Next() {
-		var e DecisionEntry
-		rows.Scan(&e.CreatedAt, &e.Until, &e.Scenario, &e.Value, &e.Type)
-		entries = append(entries, e)
-	}
-	return entries
-}

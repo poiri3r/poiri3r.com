@@ -30,7 +30,6 @@ func main() {
 	mux.HandleFunc("/api/visitors/detail", handlers.GetVisitorDetail)
 	mux.HandleFunc("/api/dashboard", handlers.GetDashboard)
 	mux.HandleFunc("/api/crowdsec/alerts", handlers.GetCrowdsecAlerts)
-	mux.HandleFunc("/api/crowdsec/decisions", handlers.GetCrowdsecDecisions)
 	//mux.HandleFunc("/api/portfolio", handlers.GetPortfolio)
 	mux.HandleFunc("/api/blog", handlers.GetBlog)
 

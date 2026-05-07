@@ -29,12 +29,10 @@ type BlockReason struct {
 }
 
 type AccessEntry struct {
-	Time      string `json:"time"`
-	IP        string `json:"ip"`
-	Method    string `json:"method"`
-	Path      string `json:"path"`
-	Status    string `json:"status"`
-	UserAgent string `json:"user_agent"`
+	Time   string `json:"time"`
+	IP     string `json:"ip"`
+	Method string `json:"method"`
+	Path   string `json:"path"`
 }
 
 type AlertEntry struct {
@@ -46,13 +44,6 @@ type AlertEntry struct {
 	EventsCount   int    `json:"events_count"`
 }
 
-type DecisionEntry struct {
-	CreatedAt string `json:"created_at"`
-	Until     string `json:"until"`
-	Scenario  string `json:"scenario"`
-	Value     string `json:"value"`
-	Type      string `json:"type"`
-}
 
 type DashboardData struct {
 	VisitorCountries []CountryStat `json:"visitor_countries"`

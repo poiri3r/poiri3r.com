@@ -1077,14 +1077,47 @@ body {
 
 .chart-card {
   padding: 20px 22px 16px;
-  height: 280px;
-  display: flex;
-  flex-direction: column;
 }
 
-.chart-card canvas {
-  flex: 1;
-  min-height: 0;
+.chart-wrap {
+  position: relative;
+  height: 200px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 14px 0 4px;
+}
+
+.pagination button {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  border-color: rgba(215, 25, 32, 0.4);
+  color: #fff;
+}
+
+.pagination button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 0.88rem;
+  min-width: 60px;
+  text-align: center;
 }
 
 .chart-title {
@@ -1094,7 +1127,6 @@ body {
   color: var(--muted);
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  flex-shrink: 0;
 }
 
 /* ── 로그 탭 ── */

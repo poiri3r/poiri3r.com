@@ -85,7 +85,9 @@ func fetchAttackCountries() []CountryStat {
 		FROM alerts
 		WHERE source_ip != '' AND source_country != ''
 		GROUP BY source_country
-	`)
+		ORDER BY cnt DESC
+		LIMIT 5
+`)
 	if err == nil {
 		defer rows.Close()
 		for rows.Next() {
@@ -110,7 +112,7 @@ func fetchAttackCountries() []CountryStat {
 		}
 	}
 
-	return sortedCountryStats(counts, 10)
+	return sortedCountryStats(counts, 5)
 }
 
 // 차단 이유 분포 — 로컬 차단만 (CAPI 제외), 상위 10개

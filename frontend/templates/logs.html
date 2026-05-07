@@ -165,7 +165,7 @@
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            x: { grid: { color: '#1e1e1e' }, ticks: { color: '#b6b6b6' } },
+            x: { grid: { color: '#1e1e1e' }, ticks: { color: '#b6b6b6', precision: 0 } },
             y: { grid: { display: false }, ticks: { color: '#e8e8e8' } }
           }
         }
@@ -232,6 +232,16 @@
       return `${kst.getUTCFullYear()}-${p(kst.getUTCMonth()+1)}-${p(kst.getUTCDate())} ${p(kst.getUTCHours())}:${p(kst.getUTCMinutes())}`;
     }
 
+    // CrowdSec ISO 타임스탬프 → KST "YYYY-MM-DD HH:MM:SS"
+    function formatCSTime(raw) {
+      if (!raw) return '—';
+      const d = new Date(raw);
+      if (isNaN(d)) return raw;
+      const kst = new Date(d.getTime() + 9 * 3600000);
+      const p = n => String(n).padStart(2, '0');
+      return `${kst.getUTCFullYear()}-${p(kst.getUTCMonth()+1)}-${p(kst.getUTCDate())} ${p(kst.getUTCHours())}:${p(kst.getUTCMinutes())}:${p(kst.getUTCSeconds())}`;
+    }
+
     // ── Nginx 페이지네이션 ───────────────────────────────
     let nginxData = [];
     let nginxPage = 0;
@@ -276,7 +286,7 @@
       const slice = alertsData.slice(alertsPage * PAGE_SIZE, (alertsPage + 1) * PAGE_SIZE);
       tbody.innerHTML = slice.map(e => `
         <tr>
-          <td class="log-time">${e.created_at}</td>
+          <td class="log-time">${formatCSTime(e.created_at)}</td>
           <td class="log-ip">${e.source_ip}</td>
           <td>${e.source_country || '—'}</td>
           <td class="log-path">${e.scenario.replace('crowdsecurity/', '')}</td>
@@ -293,11 +303,11 @@
       const slice = decisionsData.slice(decisionsPage * PAGE_SIZE, (decisionsPage + 1) * PAGE_SIZE);
       tbody.innerHTML = slice.map(e => `
         <tr>
-          <td class="log-time">${e.created_at}</td>
+          <td class="log-time">${formatCSTime(e.created_at)}</td>
           <td class="log-ip">${e.value}</td>
           <td class="log-path">${e.scenario.replace('crowdsecurity/', '')}</td>
           <td><span class="badge">${e.type}</span></td>
-          <td class="log-time">${e.until || '—'}</td>
+          <td class="log-time">${formatCSTime(e.until)}</td>
         </tr>`).join('');
       document.getElementById('decisions-page-info').textContent = `${decisionsPage + 1} / ${totalPages}`;
       document.getElementById('decisions-prev').disabled = decisionsPage === 0;

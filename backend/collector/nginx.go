@@ -63,7 +63,7 @@ func fetchVisitorCountries() []CountryStat {
 			countryCounts[country]++
 		}
 	}
-	return sortedCountryStats(countryCounts, 10)
+	return sortedCountryStats(countryCounts, 5)
 }
 
 // 오늘 정상/이상 트래픽 비율 (CrowdSec 탐지 IP 기준)
@@ -127,15 +127,24 @@ func ParseRecentLogs(n int) []AccessEntry {
 		lines = lines[len(lines)-n:]
 	}
 
-	entries := make([]AccessEntry, 0, len(lines))
+	// 최신순으로 뒤집은 뒤 IP별 최대 3개만 포함
+	raw := make([]AccessEntry, 0, len(lines))
 	for _, line := range lines {
 		if e, ok := parseNginxLine(line); ok {
-			entries = append(entries, e)
+			raw = append(raw, e)
 		}
 	}
+	for i, j := 0, len(raw)-1; i < j; i, j = i+1, j-1 {
+		raw[i], raw[j] = raw[j], raw[i]
+	}
 
-	for i, j := 0, len(entries)-1; i < j; i, j = i+1, j-1 {
-		entries[i], entries[j] = entries[j], entries[i]
+	ipCount := make(map[string]int)
+	entries := make([]AccessEntry, 0, len(raw))
+	for _, e := range raw {
+		if ipCount[e.IP] < 3 {
+			entries = append(entries, e)
+			ipCount[e.IP]++
+		}
 	}
 	return entries
 }

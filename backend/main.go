@@ -33,5 +33,6 @@ func main() {
 	//mux.HandleFunc("/api/portfolio", handlers.GetPortfolio)
 	mux.HandleFunc("/api/blog", handlers.GetBlog)
 
+	//3000번 포트 사용 (nginx에서 리버스프록시)
 	http.ListenAndServe(":3000", mux)
 }

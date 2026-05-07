@@ -100,7 +100,11 @@ func fetchAttackCountries() []CountryStat {
 
 	// 2. 로컬 decisions IP를 GeoIP로 조회해서 합산 — 먼저 IP 목록 수집
 	var decisionIPs []string
-	ipRows, err := db.Query(`SELECT DISTINCT value FROM decisions WHERE origin = 'crowdsec'`)
+	ipRows, err := db.Query(`
+		SELECT DISTINCT value FROM decisions
+		WHERE origin = 'crowdsec'
+		AND value NOT IN (SELECT DISTINCT source_ip FROM alerts WHERE source_ip != '')
+	`)
 	if err == nil {
 		for ipRows.Next() {
 			var ip string

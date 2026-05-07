@@ -14,6 +14,8 @@ var (
 )
 
 func getGeoDB() *geoip2.Reader {
+	//Do안의 코드는 프로그램 전체 실행 중 딱 한번만 실행(리소스 절약)
+	//geoip DB는 크기가 커서 리소스 절약을 위해
 	geoOnce.Do(func() {
 		path := os.Getenv("GEOIP_DB_PATH")
 		if path == "" {
@@ -29,12 +31,13 @@ func getGeoDB() *geoip2.Reader {
 	})
 	return geoDB
 }
-
+//geoDB를 가져와서 국가를 찾는 함수
 func lookupCountry(ip string) string {
 	db := getGeoDB()
 	if db == nil {
 		return ""
 	}
+	//ip를 문자열에서 IP타입으로 변경
 	parsed := net.ParseIP(ip)
 	if parsed == nil {
 		return ""

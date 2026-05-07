@@ -79,7 +79,7 @@ func fetchAttackCountries() []CountryStat {
 
 	counts := make(map[string]int)
 
-	// 1. alerts 테이블의 source_country (이미 국가 정보 있음)
+	// 1. alerts 테이블의 source_country — rows 다 읽은 후 명시적으로 닫기
 	rows, err := db.Query(`
 		SELECT source_country, COUNT(*) as cnt
 		FROM alerts
@@ -87,28 +87,32 @@ func fetchAttackCountries() []CountryStat {
 		GROUP BY source_country
 		ORDER BY cnt DESC
 		LIMIT 5
-`)
+	`)
 	if err == nil {
-		defer rows.Close()
 		for rows.Next() {
 			var country string
 			var cnt int
 			rows.Scan(&country, &cnt)
 			counts[country] += cnt
 		}
+		rows.Close() // defer 대신 명시적 close (SQLite 동시 쿼리 방지)
 	}
 
-	// 2. 로컬 decisions IP를 GeoIP로 조회해서 합산
+	// 2. 로컬 decisions IP를 GeoIP로 조회해서 합산 — 먼저 IP 목록 수집
+	var decisionIPs []string
 	ipRows, err := db.Query(`SELECT DISTINCT value FROM decisions WHERE origin = 'crowdsec'`)
 	if err == nil {
-		defer ipRows.Close()
 		for ipRows.Next() {
 			var ip string
 			ipRows.Scan(&ip)
-			country := lookupCountry(ip)
-			if country != "" {
-				counts[country]++
-			}
+			decisionIPs = append(decisionIPs, ip)
+		}
+		ipRows.Close()
+	}
+	for _, ip := range decisionIPs {
+		country := lookupCountry(ip)
+		if country != "" {
+			counts[country]++
 		}
 	}
 

